@@ -1,10 +1,12 @@
 package com.geekbrains.tests.presenter.search
 
+import android.view.View
 import com.geekbrains.tests.model.SearchResponse
 import com.geekbrains.tests.repository.GitHubRepository
 import com.geekbrains.tests.repository.GitHubRepository.GitHubRepositoryCallback
 import com.geekbrains.tests.view.search.ViewSearchContract
 import retrofit2.Response
+import java.lang.ref.WeakReference
 
 /**
  * В архитектуре MVP все запросы на получение данных адресуются в Репозиторий.
@@ -19,9 +21,22 @@ internal class SearchPresenter internal constructor(
     private val repository: GitHubRepository
 ) : PresenterSearchContract, GitHubRepositoryCallback {
 
+    private var viewRef: WeakReference<View>? = null
+
     override fun searchGitHub(searchQuery: String) {
         viewContract.displayLoading(true)
         repository.searchGithub(searchQuery, this)
+    }
+
+    override fun view(): View? = viewRef?.get()
+
+    override fun onAttach(view: View) {
+        viewRef = WeakReference(view)
+    }
+
+    override fun onDetach() {
+        viewRef?.clear()
+        viewRef = null
     }
 
     override fun handleGitHubResponse(response: Response<SearchResponse?>?) {

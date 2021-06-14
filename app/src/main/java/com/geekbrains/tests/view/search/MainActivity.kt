@@ -6,6 +6,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.TextView.OnEditorActionListener
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
 import com.geekbrains.tests.R
 import com.geekbrains.tests.model.SearchResult
 import com.geekbrains.tests.presenter.search.PresenterSearchContract
@@ -23,6 +24,8 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
     private val presenter: PresenterSearchContract = SearchPresenter(this, createRepository())
     private var totalCount: Int = 0
 
+    private var recyclerView: RecyclerView? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -38,8 +41,9 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
     }
 
     private fun setRecyclerView() {
-        recyclerView.setHasFixedSize(true)
-        recyclerView.adapter = adapter
+        recyclerView = attachView(findViewById(R.id.recyclerView))
+        recyclerView?.setHasFixedSize(true)
+        recyclerView?.adapter = adapter
     }
 
     private fun setQueryListener() {
@@ -95,6 +99,23 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
         } else {
             progressBar.visibility = View.GONE
         }
+    }
+
+    override fun attachView(view: View): RecyclerView {
+        presenter.onAttach(view)
+        return presenter.view() as RecyclerView
+    }
+
+    override fun detachView(): View? {
+        presenter.onDetach()
+        return presenter.view()
+    }
+
+    override fun onStop() {
+        recyclerView?.apply {
+            detachView() as RecyclerView?
+        }
+        super.onStop()
     }
 
     companion object {

@@ -10,8 +10,7 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.geekbrains.tests.view.details.DetailsActivity
-import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertNotNull
+import junit.framework.TestCase.*
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -119,6 +118,23 @@ class DetailsActivityTest {
         val intent = DetailsActivity.getIntent(context, count)
         val bundle = intent.extras
         assertEquals(count, bundle?.getInt(DetailsActivity.TOTAL_COUNT_EXTRA, 0))
+    }
+
+    @Test
+    fun `textview attached`() {
+        scenario.onActivity {
+            val totalCountTextView: TextView = it.attachView(it.findViewById(R.id.totalCountTextView))
+            assertNotNull(totalCountTextView)
+        }
+    }
+
+    @Test
+    fun `textview detached`() {
+        scenario.onActivity {
+            var totalCountTextView: TextView? = it.findViewById<TextView>(R.id.totalCountTextView)
+            totalCountTextView = it.detachView() as TextView?
+            assertNull(totalCountTextView)
+        }
     }
 
     @After

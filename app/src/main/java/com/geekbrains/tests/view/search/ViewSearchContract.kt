@@ -1,5 +1,7 @@
 package com.geekbrains.tests.view.search
 
+import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 import com.geekbrains.tests.model.SearchResult
 import com.geekbrains.tests.view.ViewContract
 
@@ -12,4 +14,7 @@ internal interface ViewSearchContract : ViewContract {
     fun displayError()
     fun displayError(error: String)
     fun displayLoading(show: Boolean)
+
+    fun attachView(view: View): RecyclerView
+    fun detachView(): View?
 }
